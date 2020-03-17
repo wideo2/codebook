@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="/fragments/layout :: head">
+
+</head>
+<link rel="stylesheet" href="/app/css/list.css" />
+<body>
+	<header th:replace="/fragments/layout :: header"></header>
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h2>코드북 게시판</h2>
+				<div class="row">
+					<div class="col-12 text-right right">
+						<form class="form form-inline justify-content-end" id="searchForm">
+							<input type="text" class="form-control mb-2 mr-sm-2" id="keyword" placeholder="검색어를 입력하세요"/>
+							<button type="button" id="btnSearch" class="btn btn-primary mb-2">검색</button>
+						</form>
+					</div>
+				</div>
+			</div>	
+		</div>
+			<div class="all-box">
+				<div th:each="board : ${list}">
+				<a th:href="@{'/free/view/' + ${board.id} + ${criteria.getQuery(criteria.page)} }">
+				<div class="board-box">
+						<th:block th:if="${board.firstImg} != ''">
+							<div th:utext="${board.firstImg}"></div>
+						</th:block>
+						<th:block th:if="${board.firstImg} == ''">
+							<div class="thumbnail"  ></div>
+						</th:block>
+						<div class="content-box">
+							<div class="title" th:text="${board.title}">글제목</div>
+							<div class="box">
+							<div class="writer" th:text="${board.writer}">작성자</div>
+							<div class="date" th:text="${board.writeDate}">작성일</div>
+								
+							</div>
+						</div>
+				</div>
+				</a>
+				</div>
+
+			</div>	
+	
+		
+		<div class="row mt-3">
+			<div class="col-11 offset-1 text-right right">
+				<a href="/free/write" class="btn btn-primary">글작성</a>
+			</div> 
+		</div>
+		
+		<nav>
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:if="${criteria.prev}">
+					<a th:href="@{ '/free/list' + ${criteria.getQuery(criteria.start - 1)} }" class="page-link" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+				
+				<th:block th:each="i : ${ #numbers.sequence( criteria.start, criteria.end )}">
+					<li class="page-item">
+						<a th:href="@{ '/free/list' + ${criteria.getQuery(i)} }" th:text="${i}" class="page-link">인덱스 번호</a>
+					</li>
+				</th:block>
+				
+				<li class="page-item" th:if="${criteria.next}">
+					<a th:href="@{'/free/list' + ${criteria.getQuery(criteria.end + 1)} }" class="page-link" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+	<footer th:replace="/fragments/layout :: footer"></footer>
+	<script>
+		$(function() {
+			$("#btnSearch").on("click", function(e) {
+				let text = $("#keyword").val();
+				location.href = '/free/list?keyword=' + text;
+			});
+			$("#searchForm").on("submit", function(e) {
+				$("#btnSearch").click();
+				return false;
+			});
+			/* let title = $(".title").val();
+
+			if(title.length >= 9{
+				let text =  title.substring(0,9)+"..";
+				document.write(text)
+				$("title").text(text);
+			} */
+			
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.gondr.mappers.CommentMapper">
+
+ 	
+	
+	<insert id="write">
+		INSERT INTO spring_comment (boardId, name, profile,content,
+		writeDate)
+		VALUES ( #{boardId}, #{name}, #{profile},#{content},NOW() )
+	</insert>
+	
+	<delete id="delete">
+		DELETE FROM spring_comment WHERE value = #{value}
+	</delete>
+	
+	
+	<select id="list" resultType="CommentVO">
+		SELECT name,profile,content,writeDate FROM spring_comment
+		WHERE boardId = #{boardId}
+		ORDER BY writeDate  LIMIT #{pageStart}, #{perPageNum}
+	</select>
+	
+	<select id="cnt" resultType="Integer">
+		SELECT count(*)
+		FROM spring_comment
+		WHERE boardId = #{boardId}
+		
+	
+	</select>
+	<update id="update">
+		UPDATE spring_comment SET content = #{content},
+		writeDate = NOW()  WHERE value = #{value}
+	</update>
+</mapper>
