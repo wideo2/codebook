@@ -51,8 +51,16 @@ public class BoardController {
 	
 	
 	@RequestMapping(value = "write", method = RequestMethod.GET)
-	public String viewWritePage(Model model) {
-		model.addAttribute("boardVO", new BoardVO());
+	public String viewWritePage(Model model,HttpSession session,RedirectAttributes rttr) {
+
+		UserVO user = (UserVO) session.getAttribute("user");
+		if(user == null) {
+			rttr.addFlashAttribute("msg","로그인해주세요");
+			return "redirect:/board/list";
+		}else {
+			model.addAttribute("boardVO", new BoardVO());
+		}
+		
 		return "board/write";
 	}
 
@@ -104,7 +112,10 @@ public class BoardController {
 				return "redirect:/board/view/"+board.getId();
 			}
 		}
-		
+		if(user.getLevel() <=5) {
+			rttr.addAttribute("msg","5레벨 이상만 글을쓸수 있습니다.");
+			return "redirect:/board/list";
+		}
 		board.setWriter(user.getUserid());
 	
 		LucyXssFilter filter = XssSaxFilter.getInstance("lucy-xss-sax.xml");
@@ -141,7 +152,7 @@ public class BoardController {
 	public String viewArticle(@PathVariable Integer id, Model model, Criteria criteria) {
 		BoardVO board = service.viewArticle(id);
 		criteria.setBoardId(id);
-		
+		criteria.setType("board");
 		List<CommentVO> list = cservice.list(criteria);
 		
 		
@@ -149,7 +160,11 @@ public class BoardController {
 		model.addAttribute("list",list);
 		
 		Integer cnt = cservice.getCnt(criteria);
+		System.out.println("cnt"+cnt);
+		
 		criteria.calculate(cnt);
+		
+	
 		
 		return "board/view";
 	}
@@ -160,7 +175,10 @@ public class BoardController {
 		model.addAttribute("list", list);
 		
 		Integer cnt = service.countArticle(criteria);
-		criteria.calculate(cnt);
+		
+			
+			criteria.calculate(cnt);
+		
 		
 		return "board/list";
 	}

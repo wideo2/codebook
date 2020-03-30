@@ -9,8 +9,8 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-10 offset-1">
-				<h2 th:if="${boardVO == null }">글작성</h2>
-				<h2 th:if="${boardVO != null }">글수정</h2>
+				<h2 th:if="${boardVO.id == null }">글작성</h2>
+				<h2 th:if="${boardVO.id != null }">글수정</h2>
 				<form method="post" th:action="@{/free/write}" enctype="multipart/form-data" th:object="${boardVO}">
 					<input type="hidden" th:field="*{id}">
 					<div class="form-group">

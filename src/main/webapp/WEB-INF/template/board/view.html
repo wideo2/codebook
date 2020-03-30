@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="/fragments/layout :: head"></head>
-
+<link rel="stylesheet" href="/app/css/comment.css" />
 <body>
 	<header th:replace="/fragments/layout :: header"></header>
 	<link rel="stylesheet" href="/app/css/prism.css" />
@@ -34,9 +34,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="row mt-3">
+		<div class="row mt-3 margin-bottom">
 			<div class="col-10 offset-1 text-right">
 				<th:block th:if="${session.user != null and session.user.userid == board.writer}">
+					
 					<a th:href="@{'/board/write/' + ${board.id} }" class="btn btn-success">수정</a>
 					<a th:href="@{'/board/delete/' + ${board.id} }" class="btn btn-danger">삭제</a>
 				</th:block>
@@ -44,29 +45,91 @@
 			</div> 
 		</div>
 		<div class="row d-flex flex-column">
-			<div class="write-box">
-				<form th:method="post" th:action="@{/comment/write}" >
-					<input type="hidden" th:value="${board.id}" name="id">
-					<input type="text" name="content" placeholder="댓글을 입력하세요"/>
-					<button type="submit" class="btn btn-primary">댓글작성</button>
-				</form>
-			</div>
-			<div class="all-comment">
-				<div th:each="comment : ${list}">
+			
+			<div class="all-comment col-10 offset-1">
+				<div th:each="comment : ${list}" >
 					<div class="comment-box">
 						<div class="profile">
-							<img th:src="@{ '/user/profile/' + ${comment.profile}}" alt="안뜸" style="width:128px;height:128px;"/>
-							<div th:text="${comment.name}"></div>
+							<img th:src="@{ '/user/profile/' + ${comment.profile}}" alt="안뜸" style="width:30px;height:30px;"/>
+							<span class="badge badge-primary flex-center" th:text="@{${comment.name}+'(LV.'+${comment.level}+')'}"></span>
+							
+							<span class="badge badge-warning flex-center" th:text="${comment.writeDate}"></span>
 						</div>
 						<div class="comment">
-							<div th:text="${comment.content}"></div>
-							<div th:text="${comment.writeDate}"></div>
+							<div class="comment-content" th:text="${comment.content}"></div>
+							<form  class="update hide " th:action="@{'/comment/update/' + ${comment.value}+'_'+${comment.boardId}+'_board' }">
+								<input type="text" th:placeholder="${comment.content}" name="content"/>
+								
+								
+							</form>
+							
+							<th:block th:if="${session.user != null and session.user.userid == comment.name}">
+								<div class="event-btn">
+									<button class="btn btn-outline-success before-update">수정</button>
+								
+									<a th:href="@{'/comment/delete/' + ${comment.value}+'_'+${comment.boardId}+'_board' }" class="btn btn-outline-danger">삭제</a>
+								</div>
+							</th:block>
+							
 						</div>
 					</div>
-				</div>		
+				</div>	
+				
+				
+				<nav>
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:if="${criteria.prev}">
+					<a th:href="@{ '/board/view/'+${board.id} + ${criteria.getQuery(criteria.start - 1)} }" class="page-link" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+				<th:block th:if="${criteria.totalPage != 0}">
+				<th:block th:each="i : ${ #numbers.sequence( criteria.start, criteria.end )}">
+					<li class="page-item">
+						<a th:href="@{ '/board/view/'+${board.id} + ${criteria.getQuery(i)} }" th:text="${i}" class="page-link ">인덱스 번호</a>
+					</li>
+				</th:block>
+				</th:block>
+				<li class="page-item" th:if="${criteria.next}">
+					<a th:href="@{'/board/view/'+${board.id} + ${criteria.getQuery(criteria.end + 1)} }" class="page-link" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+		
+				<div class="write-box">
+				<form  th:action="@{/comment/write}" >
+					<input type="hidden" th:value="${board.id}" name="id">
+					<input type="hidden" value="board" name="type">
+					<input  class="write-input" type="text" name="content" placeholder="댓글을 입력하세요"/>
+					<button type="submit" class="btn btn-primary">댓글작성</button>
+				</form>
+			</div>	
 			</div>
 		</div>
 	</div>
 	<footer th:replace="/fragments/layout :: footer"></footer>
+	<script>
+		$(function(){
+			$(".before-update").on("click",function(){
+				let content = $(this).parent().prev().prev();
+				let input = $(this).parent().prev().children();
+				
+				if(input.val() != ""){
+					console.log("");
+					$(this).parent().prev().submit();
+				}
+				
+				
+				$(this).parent().prev().toggleClass("hide")
+				content.toggleClass("hide")
+			
+				
+					
+ 			})
+ 			
+		})
+	</script>
 </body>
 </html>

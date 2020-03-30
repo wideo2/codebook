@@ -24,7 +24,7 @@ c<!DOCTYPE html>
 		</div>
 			<div class="all-box">
 				<div th:each="board : ${list}">
-				<a th:href="@{'/board/view/' + ${board.id} + ${criteria.getQuery(criteria.page)} }">
+				<a th:href="@{'/board/view/' + ${board.id} }">
 				<div class="board-box">
 						<th:block th:if="${board.firstImg} != ''">
 							<div th:utext="${board.firstImg}"></div>
@@ -62,13 +62,13 @@ c<!DOCTYPE html>
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
-				
+				<th:block th:if="${criteria.totalPage != 0}">
 				<th:block th:each="i : ${ #numbers.sequence( criteria.start, criteria.end )}">
-					<li class="page-item">
-						<a th:href="@{ '/board/list' + ${criteria.getQuery(i)} }" th:text="${i}" class="page-link">인덱스 번호</a>
+					<li class="page-item ">
+						<a  th:href="@{ '/board/list' + ${criteria.getQuery(i)} }" th:text="${i}" class="page-link index" >인덱스 번호</a>
 					</li>
 				</th:block>
-				
+				</th:block>
 				<li class="page-item" th:if="${criteria.next}">
 					<a th:href="@{'/board/list' + ${criteria.getQuery(criteria.end + 1)} }" class="page-link" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
@@ -88,13 +88,8 @@ c<!DOCTYPE html>
 				$("#btnSearch").click();
 				return false;
 			});
-			/* let title = $(".title").val();
-
-			if(title.length >= 9{
-				let text =  title.substring(0,9)+"..";
-				document.write(text)
-				$("title").text(text);
-			} */
+		
+			
 			
 		});
 	</script>

@@ -12,10 +12,19 @@ public class Criteria {
 	private Integer end;
 	private Integer totalPage;
 
-	private Integer boardId; // 댓글 전용
-
+	// 댓글 전용
+	private Integer boardId; 
+	private String type;
 
 	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	// 생성자
 	public Criteria() {
 		page = 1;
@@ -29,9 +38,9 @@ public class Criteria {
 	public void calculate(Integer total) {
 		// 전체 글의 갯수인 total을 받아서 페이징을 위한 값들을 만들어줍니다.
 		totalPage = (int) Math.ceil((double) total / perPageNum);
-
+		System.out.println("CAL :"+totalPage);
 		if (totalPage == 0)
-			totalPage = 1;
+			totalPage = 0;
 
 		// 끝번호
 		end = (int) Math.ceil((double) page / perChapterNum) * perChapterNum;
@@ -48,13 +57,16 @@ public class Criteria {
 	}
 
 	public String getQuery(Integer page) {
+		System.out.println(page);
 		String q = "?page=" + page;
 		if (this.keyword != null) {
+			
 			q += "&keyword=" + this.keyword;
 		}
+		System.out.println(q);
 		return q;
 	}
-
+	
 	public Integer getPageStart() {
 		return (page - 1) * perPageNum;
 	}

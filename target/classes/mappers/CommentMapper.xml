@@ -9,8 +9,8 @@
 	
 	<insert id="write">
 		INSERT INTO spring_comment (boardId, name, profile,content,
-		writeDate)
-		VALUES ( #{boardId}, #{name}, #{profile},#{content},NOW() )
+		writeDate,level,type)
+		VALUES ( #{boardId}, #{name}, #{profile},#{content},NOW(),#{level},#{type} )
 	</insert>
 	
 	<delete id="delete">
@@ -19,15 +19,15 @@
 	
 	
 	<select id="list" resultType="CommentVO">
-		SELECT name,profile,content,writeDate FROM spring_comment
-		WHERE boardId = #{boardId}
-		ORDER BY writeDate  LIMIT #{pageStart}, #{perPageNum}
+		SELECT boardId,name,profile,content,writeDate,level,value FROM spring_comment
+		WHERE boardId = #{boardId} and  type = #{type}
+		ORDER BY value  LIMIT #{pageStart}, #{perPageNum}
 	</select>
 	
 	<select id="cnt" resultType="Integer">
 		SELECT count(*)
 		FROM spring_comment
-		WHERE boardId = #{boardId}
+		WHERE boardId = #{boardId} and type = #{type}
 		
 	
 	</select>

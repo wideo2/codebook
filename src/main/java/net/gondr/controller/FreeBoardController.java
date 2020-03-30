@@ -22,10 +22,12 @@ import com.nhncorp.lucy.security.xss.LucyXssFilter;
 import com.nhncorp.lucy.security.xss.XssSaxFilter;
 
 import net.gondr.domain.BoardVO;
+import net.gondr.domain.CommentVO;
 import net.gondr.domain.Criteria;
 import net.gondr.domain.ExpData;
 import net.gondr.domain.UploadResponse;
 import net.gondr.domain.UserVO;
+import net.gondr.service.CommentService;
 import net.gondr.service.FreeBoardService;
 import net.gondr.service.UserService;
 import net.gondr.util.FileUtil;
@@ -44,10 +46,20 @@ public class FreeBoardController {
 	@Autowired
 	private UserService uservice;
 
+	@Autowired
+	private CommentService cservice;
 	@RequestMapping(value = "write", method = RequestMethod.GET)
-	public String viewWritePage(Model model) {
-		model.addAttribute("boardVO", new BoardVO());
-		return "free/write";
+	public String viewWritePage(Model model,HttpSession session,RedirectAttributes rttr) {
+		
+		UserVO user = (UserVO) session.getAttribute("user");
+		if(user == null) {
+			rttr.addFlashAttribute("msg","로그인해주세요");
+			return "redirect:/free/list";
+		}else {
+			model.addAttribute("boardVO", new BoardVO());
+		}
+		
+		return "board/write";
 	}
 
 	@RequestMapping(value = "upload", method = RequestMethod.POST)
@@ -98,7 +110,10 @@ public class FreeBoardController {
 				return "redirect:/free/view/" + board.getId();
 			}
 		}
-
+		if(user.getLevel() <=3) {
+			rttr.addAttribute("msg","3레벨 이상만 글을쓸구 있습니다.");
+			return "redirect:/board/list";
+		}
 		board.setWriter(user.getUserid());
 
 		LucyXssFilter filter = XssSaxFilter.getInstance("lucy-xss-sax.xml");
@@ -132,10 +147,24 @@ public class FreeBoardController {
 	@RequestMapping(value = "view/{id}", method = RequestMethod.GET)
 	public String viewArticle(@PathVariable Integer id, Model model, Criteria criteria) {
 		BoardVO board = service.viewArticle(id);
-		System.out.println(board);
-		System.out.println(board.getContent());
+		criteria.setBoardId(id);
+		criteria.setType("free");
+		List<CommentVO> list = cservice.list(criteria);
+		
+		
 		model.addAttribute("board", board);
-
+		model.addAttribute("list",list);
+		System.out.println("page: "+criteria.getPage());
+		System.out.println("totoal :"+criteria.getTotalPage());
+		System.out.println("pagnum :"+criteria.getPerPageNum());
+		System.out.println("chapternum :"+criteria.getPerChapterNum());
+		Integer cnt = cservice.getCnt(criteria);
+		System.out.println("cnt"+cnt);
+		
+			criteria.calculate(cnt);
+		
+	
+		
 		return "free/view";
 	}
 

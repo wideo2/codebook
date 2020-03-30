@@ -24,7 +24,7 @@
 		</div>
 			<div class="all-box">
 				<div th:each="board : ${list}">
-				<a th:href="@{'/free/view/' + ${board.id} + ${criteria.getQuery(criteria.page)} }">
+				<a th:href="@{'/free/view/' + ${board.id}}">
 				<div class="board-box">
 						<th:block th:if="${board.firstImg} != ''">
 							<div th:utext="${board.firstImg}"></div>
@@ -60,13 +60,13 @@
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
-				
+				<th:block th:if="${criteria.totalPage != 0}">
 				<th:block th:each="i : ${ #numbers.sequence( criteria.start, criteria.end )}">
 					<li class="page-item">
 						<a th:href="@{ '/free/list' + ${criteria.getQuery(i)} }" th:text="${i}" class="page-link">인덱스 번호</a>
 					</li>
 				</th:block>
-				
+				</th:block>
 				<li class="page-item" th:if="${criteria.next}">
 					<a th:href="@{'/free/list' + ${criteria.getQuery(criteria.end + 1)} }" class="page-link" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
