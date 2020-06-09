@@ -113,7 +113,8 @@ public class BoardController {
 			}
 		}
 		if(user.getLevel() <=5) {
-			rttr.addAttribute("msg","5레벨 이상만 글을쓸수 있습니다.");
+			
+			rttr.addFlashAttribute("msg","5레벨 이상만 글을쓸수 있습니다.");
 			return "redirect:/board/list";
 		}
 		board.setWriter(user.getUserid());

@@ -6,8 +6,7 @@
 <link rel="stylesheet" href="/app/css/comment.css" />
 <body>
 	<header th:replace="/fragments/layout :: header"></header>
-	<link rel="stylesheet" href="/app/css/prism.css" />
-	<script src="/app/js/prism.js"></script>
+
 	<div class="container">
 		<div class="row">
 			<div class="col-10 offset-1">
@@ -57,7 +56,7 @@
 						</div>
 						<div class="comment">
 							<div class="comment-content" th:text="${comment.content}"></div>
-							<form  class="update hide " th:action="@{'/comment/update/' + ${comment.value}+'_'+${comment.boardId}+'_free' }">
+							<form  class="update hide" th:action="@{'/comment/update/' + ${comment.value}+'_'+${comment.boardId}+'_free' }">
 								<input type="text" th:placeholder="${comment.content}" name="content"/>
 								
 								

@@ -59,7 +59,7 @@ public class FreeBoardController {
 			model.addAttribute("boardVO", new BoardVO());
 		}
 		
-		return "board/write";
+		return "free/write";
 	}
 
 	@RequestMapping(value = "upload", method = RequestMethod.POST)
@@ -111,8 +111,8 @@ public class FreeBoardController {
 			}
 		}
 		if(user.getLevel() <=3) {
-			rttr.addAttribute("msg","3레벨 이상만 글을쓸구 있습니다.");
-			return "redirect:/board/list";
+			rttr.addFlashAttribute("msg","3레벨 이상만 글을쓸구 있습니다.");
+			return "redirect:/free/list";
 		}
 		board.setWriter(user.getUserid());
 
@@ -186,7 +186,7 @@ public class FreeBoardController {
 
 		if (data == null || !data.getWriter().equals(user.getUserid())) {
 			rttr.addFlashAttribute("msg", "수정할 권한 이없습니다.");
-			return "redirect:/board/list";
+			return "redirect:/free/list";
 		}
 		model.addAttribute("boardVO", data);
 		return "free/write";
